@@ -1,0 +1,100 @@
+@for $i from 0 to 10 {
+  .cell:nth-child(10n + #{$i + 1}):hover ~ .content {
+     --squareWidth: #{100 + $i * 20}px;
+   }
+   .cell:nth-child(n + #{10 * $i + 1}):nth-child(-n + #{10 * ($i + 1)}):hover ~ .content {
+     --squareHeight: #{100 + $i * 20}px;: #{$i};
+   }
+ }
+
+.d3-tip-map {
+  line-height: 1;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 18px;
+  opacity: 1;
+}
+
+.line_chart_yaxis text{
+    fill: #000;
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+.map path {
+    stroke: #000;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 300px;
+    height: 15px;
+    border-radius: 5px;  
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; 
+    background: #0465aa;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #0465aa;
+    cursor: pointer;
+  }
+
+.base-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.interaction_container {
+  margin-bottom: 80px;
+}
+
+.barchart-container, #linechart {
+  display: inline-block;
+}
+
+.barchart-container {
+  height: 600px;
+}
+
+#barchart {
+  height: 450px;
+  width: 917px;
+  overflow-y: auto;
+}
+
+#barchart text {
+  font-size: 16px;
+
+}
+
+.bar-chart-title {
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+}

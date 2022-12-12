@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<style>
+text {
+	font-family:verdana;
+}
+</style>
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Final</title>
+	<link rel="stylesheet" href="index.css">
+</head>
+<body>
+	<div class="base-container">
+		<div class="container">
+			<div class="worldMapDiv" style="display:inline-block">
+				<svg id="worldMap" width="1200" height="500"></svg>
+			</div>
+			<div class="interaction_container" style="display:inline-block">
+				<div class="slidecontainer">
+					<input type="range" min="1990" max="2015" value="1990" class="slider" id="myRange">
+					<p>Year: <span id="year"></span></p>
+				</div>
+				<div class="selectorcontainer" style="display:inline-block">
+					<select name="cause-of-death" class="selector" id="cause-of-death-selector"></select>
+					<p>Cause of Death: <span id="cause-of-death"></span></p>
+					<input type="checkbox" id="demoCheckbox" name="checkbox" value="1">
+					<label for="demoCheckbox">Show in Ratio</label>
+				</div>
+			</div>
+		</div>
+		<div class="below">
+			<div class="chart-container">
+				<div class="barchart-container">
+					<!-- <div class="bar-chart-title">Title</div> -->
+					<div id="barchart"></div>
+					<div id="x-axis"></div>
+				</div>
+				<div id="linechart"></div>
+			</div>
+		</div>
+	</div>
+	</body>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src="d3-tip.js"></script>
+	<script src="main.js"></script>
+</body>
+</html>
+
