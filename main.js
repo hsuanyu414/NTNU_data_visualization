@@ -12,9 +12,13 @@ var mouseX = 0, mouseY = 0;
 
 var country_bar = document.getElementById("countryINbar");
 var country_line = document.getElementById("countryINline");
-country_bar.innerHTML = "All";
-country_line.innerHTML = "All";
+country_bar.innerHTML = "All countries";
+country_line.innerHTML = "All countries";
 
+var percentINbar = document.getElementById("percentINbar");
+var percentINline = document.getElementById("percentINline");
+percentINbar.innerHTML = "count";
+percentINline.innerHTML = "count";
 
 /* GLOBAL VARIABLE */
 let cause_of_death_names = [];
@@ -112,6 +116,13 @@ cod_csv.then((data) => {
     checkbox.onchange = function() {
         selected_ratio = this.checked;
         console.log("checkbox_change: "+this.checked)
+        if (this.checked) {
+            percentINbar.innerHTML = "ratio(in %)";
+            percentINline.innerHTML = "ratio(in %)";
+        } else {
+            percentINbar.innerHTML = "count";
+            percentINline.innerHTML = "count";
+        }
         changeLineChart(selected_cod, selected_country_code);
         updateBarChart(getCODDeathCountByYear(data, slider.value, selected_country_code));
     }
@@ -155,14 +166,21 @@ cod_csv.then((data) => {
     var causeOfDeath_line_output = document.getElementById("cause-of-death-line");
 
 
-    causeOfDeath_output.innerHTML = causeOfDeathSelector.value;
-    causeOfDeath_map_output.innerHTML = causeOfDeathSelector.value;
-    causeOfDeath_line_output.innerHTML = causeOfDeathSelector.value;
+    causeOfDeath_output.innerHTML = "All cause of death";
+    causeOfDeath_map_output.innerHTML = "All cause of death";
+    causeOfDeath_line_output.innerHTML = "All cause of death";
 
     causeOfDeathSelector.oninput = function() {
-        causeOfDeath_output.innerHTML = this.value;
-        causeOfDeath_map_output.innerHTML = this.value;
-        causeOfDeath_line_output.innerHTML = this.value;
+        if(this.value == "All"){
+            causeOfDeath_output.innerHTML = "All cause of death";
+            causeOfDeath_map_output.innerHTML = "All cause of death";
+            causeOfDeath_line_output.innerHTML = "All cause of death";
+        }
+        else{
+            causeOfDeath_output.innerHTML = this.value;
+            causeOfDeath_map_output.innerHTML = this.value;
+            causeOfDeath_line_output.innerHTML = this.value;
+        }
         console.log("select COD: "+this.value)
         selected_cod = this.value;
         color_now = cod_color[cod_options.indexOf(selected_cod)]
@@ -267,9 +285,13 @@ cod_csv.then((data) => {
                     
             })
             map_paths.on('mousemove', function(d){
+                x = d3.event.clientX
+                y = d3.event.clientY
+                // x, y = d3.mouse(this)[0], d3.mouse(this)[1]
+                // console.log(x, y)
                 d3.select(".d3-tip-map")
-                .style("left", (d3.mouse(this)[0] + 15) + "px")
-                .style("top", (d3.mouse(this)[1] + 15) + "px");
+                .style("left", ( x - 100) + "px")
+                .style("top",  ( y - 80) + "px");
             })
             map_paths.on('mouseout', function(d){
                 d3.tip.hide(d)
@@ -281,6 +303,7 @@ cod_csv.then((data) => {
             var zoom = d3.zoom()
             .scaleExtent([0.8, 8])
             .on('zoom', function() {
+                // console.log(d3.event.transform)
                 map_svg.selectAll('path')
                       .attr('transform', d3.event.transform);
             });
@@ -298,6 +321,8 @@ cod_csv.then((data) => {
                 click_on_map = false;
             else{
                 selected_country_code = "All";
+                country_bar.innerHTML = "All countries";
+                country_line.innerHTML = "All countries";
                 console.log("select country: "+selected_country_code)
                 changeLineChart(selected_cod, selected_country_code);
                 updateBarChart(getCODDeathCountByYear(data, slider.value, selected_country_code));
@@ -338,9 +363,9 @@ cod_csv.then((data) => {
 
     // set the dimensions and margins of the graph
     let death_count = {};
-    let linechart_margin = {top: 10, right: 80, bottom: 30, left: 80},
-        linechart_width = 800 - linechart_margin.left - linechart_margin.right,
-        linechart_height = 500 - linechart_margin.top - linechart_margin.bottom;
+    let linechart_margin = {top: 10, right: 80, bottom: 40, left: 180},
+        linechart_width = 900 - linechart_margin.left - linechart_margin.right,
+        linechart_height = 460 - linechart_margin.top - linechart_margin.bottom;
     var linechartYasis, linechartLines, linechartLinesArea, linechartCircles, x, y, linechartLines, linechartLinesAreaBase, linechartCirclesBase, linechartXaxis, linechartYaxis, linechartXaxisGroup, linechartYaxisGroup, linechartSvg, linechartSvgGroup, linechartSvgAreaGroup, linechartSvgLineGroup, linechartSvgCircleGroup;
     var yearParse = d3.timeParse("%Y");
     //global variable for linechart

@@ -15,9 +15,9 @@ text {
 <body>
 	<div class="base-container">
 		<div class="container">
-			<div class="worldMapDiv" style="display:inline-block">
+			<div class="worldMapDiv" style="display:inline-block;">
 				<div class="map-chart-title">
-					Death count of COD <span id="cause-of-death-map"></span>
+					Death count/ratio due to <span id="cause-of-death-map"></span>
 					in <span id="yearINmap"></span>
 				</div>
 				<svg id="worldMap" class="worldMap" width="1200" height="500"></svg>
@@ -37,19 +37,20 @@ text {
 			</div>
 		</div>
 		<div class="below">
-			<div class="chart-container">
+			<div class="chart-container" style="display:inline-block">
 				<div class="barchart-container">
 					<div class="bar-chart-title">
 						Cause of Death Ranking
-						in Country: <span id="countryINbar"></span>
+						in <span id="countryINbar"></span>
 						in <span id="yearINbar"></span>
+						<span id="percentINbar"></span>
 					</div>
 					<div id="barchart"></div>
 					<div id="x-axis"></div>
 				</div>
 				<div class="linechart-container">
 					<div class="line-chart-title">
-						Death count of COD: <span id="cause-of-death-line"></span>
+						Death <span id="percentINline"></span> due to <span id="cause-of-death-line"></span>
 						in <span id="countryINline"></span>
 					</div>
 					<div id="linechart"></div>
