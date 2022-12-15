@@ -285,13 +285,13 @@ cod_csv.then((data) => {
                     
             })
             map_paths.on('mousemove', function(d){
-                x = d3.event.clientX
-                y = d3.event.clientY
+                mouseX = d3.event.clientX
+                mouseY = d3.event.clientY
                 // x, y = d3.mouse(this)[0], d3.mouse(this)[1]
                 // console.log(x, y)
                 d3.select(".d3-tip-map")
-                .style("left", ( x - 100) + "px")
-                .style("top",  ( y - 80) + "px");
+                .style("left", ( mouseX - 100) + "px")
+                .style("top",  ( mouseY - 80) + "px");
             })
             map_paths.on('mouseout', function(d){
                 d3.tip.hide(d)
