@@ -1,8 +1,20 @@
 var slider = document.getElementById("myRange");
 var year_output = document.getElementById("year");
+var year_map_output = document.getElementById("yearINmap")
+var year_bar_output = document.getElementById("yearINbar")
+
 var checkbox = document.getElementById("demoCheckbox");
 year_output.innerHTML = slider.value; // Display the default slider value
+year_map_output.innerHTML = slider.value;
+year_bar_output.innerHTML = slider.value;
+
 var mouseX = 0, mouseY = 0;
+
+var country_bar = document.getElementById("countryINbar");
+var country_line = document.getElementById("countryINline");
+country_bar.innerHTML = "All";
+country_line.innerHTML = "All";
+
 
 /* GLOBAL VARIABLE */
 let cause_of_death_names = [];
@@ -10,6 +22,7 @@ let country_code = []
 var selected_year = 1990;
 var selected_cod = "All";
 var selected_country_code = "All";
+var selected_country_long_name = "All";
 var selected_ratio = false;
 var color_now = "gray";
 var click_on_map = false;
@@ -18,6 +31,9 @@ var on_map_country_code = "All";
 let BAR_CHART = {}
 
 var year = document.getElementById("year").innerHTML;
+var yearINmap = year;
+// var yearINbar = document.getElementById("yearINbar").innerHTML;
+// var yearINline = document.getElementById("yearINline").innerHTML;
 // Update the current slider value (each time you drag the slider handle)
 
 csv_array = []
@@ -31,6 +47,9 @@ cod_csv = d3.csv("cause_of_deaths.csv", (row) => {
 
 })
  
+
+
+var resetmap_bottom = document.querySelector(".reset-map-btn")    
 
 var cod_options = ["All","Meningitis","Alzheimer's Disease and Other Dementias","Parkinson's Disease","Nutritional Deficiencies","Malaria","Drowning","Interpersonal Violence","Maternal Disorders","HIV/AIDS","Drug Use Disorders","Tuberculosis","Cardiovascular Diseases","Lower Respiratory Infections","Neonatal Disorders","Alcohol Use Disorders","Self-harm","Exposure to Forces of Nature","Diarrheal Diseases","Environmental Heat and Cold Exposure","Neoplasms","Conflict and Terrorism","Diabetes Mellitus","Chronic Kidney Disease","Poisonings","Protein-Energy Malnutrition","Road Injuries","Chronic Respiratory Diseases","Cirrhosis and Other Chronic Liver Diseases","Digestive Diseases","Fire, Heat, and Hot Substances","Acute Hepatitis"];
 // var cod_color
@@ -47,7 +66,6 @@ map_worldJson = d3.json("worldMap.json")
 let map_margin = {top: 100, right: 20, bottom: 20, left: 20},
     map_width = 1200 - map_margin.left - map_margin.right,
     map_height = 600 - map_margin.top - map_margin.bottom;
-
 
 
 /* BAR CHART DATA PROCESSING FUNCTION */
@@ -76,11 +94,21 @@ function getCODDeathCountByYear(data, year, code="All") {
     })
 }
 
+    function sleep(milisec) {
+        var startTime = new Date().getTime();
+        while (new Date().getTime() < startTime + milisec);
+    }
+
+
+
 
 /* LINE CHART DATA PROCESSING FUNCTION */
 cod_csv.then((data) => {
     /*SHARED GLOBAL VARIABLE*/
+    
     var t = d3.transition().duration(750).delay(100);
+    
+
     checkbox.onchange = function() {
         selected_ratio = this.checked;
         console.log("checkbox_change: "+this.checked)
@@ -90,12 +118,19 @@ cod_csv.then((data) => {
 
     slider.oninput = function() {
         year_output.innerHTML = this.value;
+        year_map_output.innerHTML = this.value;
+        year_bar_output.innerHTML = this.value;
+
         selected_year = this.value;
         
     }
     
     slider.addEventListener("mouseup", changeMap);
     slider.addEventListener("keyup", changeMap);
+    slider.addEventListener("keyup", () => {
+        updateBarChart(getCODDeathCountByYear(data, slider.value, selected_country_code));
+    });
+    
       // only update the variable here and renew the d3 chart while mouse up on slider
     slider.onmouseup = function() {
         console.log("slide_change: "+selected_year)
@@ -116,9 +151,18 @@ cod_csv.then((data) => {
 
     // COD selector
     var causeOfDeath_output = document.getElementById("cause-of-death");
+    var causeOfDeath_map_output = document.getElementById("cause-of-death-map");
+    var causeOfDeath_line_output = document.getElementById("cause-of-death-line");
+
+
     causeOfDeath_output.innerHTML = causeOfDeathSelector.value;
+    causeOfDeath_map_output.innerHTML = causeOfDeathSelector.value;
+    causeOfDeath_line_output.innerHTML = causeOfDeathSelector.value;
+
     causeOfDeathSelector.oninput = function() {
         causeOfDeath_output.innerHTML = this.value;
+        causeOfDeath_map_output.innerHTML = this.value;
+        causeOfDeath_line_output.innerHTML = this.value;
         console.log("select COD: "+this.value)
         selected_cod = this.value;
         color_now = cod_color[cod_options.indexOf(selected_cod)]
@@ -161,6 +205,9 @@ cod_csv.then((data) => {
             .on("click", function(d){
                 click_on_map = true;
                 selected_country_code = d.properties.adm0_iso;
+                selected_country_long_name = d.properties.name_long;
+                country_bar.innerHTML = selected_country_long_name;
+                country_line.innerHTML = selected_country_long_name;
                 console.log("select country: "+selected_country_code)
                 changeLineChart(selected_cod, selected_country_code);
                 updateBarChart(getCODDeathCountByYear(data, slider.value, selected_country_code));
@@ -213,7 +260,7 @@ cod_csv.then((data) => {
                 on_map_country_code = d.properties.adm0_iso;
                 map_base.attr("stroke-width", function(d){
                     if(d.properties.adm0_iso == on_map_country_code)
-                        return "3px"
+                        return "2px"
                     else
                         return "1px"
                 })
@@ -229,6 +276,21 @@ cod_csv.then((data) => {
                 map_base.attr("stroke-width", "1px")
             })
             map_svg.call(d3.tip);
+            
+            var map_html = d3.select("#worldMap");
+            var zoom = d3.zoom()
+            .scaleExtent([0.8, 8])
+            .on('zoom', function() {
+                map_svg.selectAll('path')
+                      .attr('transform', d3.event.transform);
+            });
+            /* reset map after zoom */
+            function resetMap() {
+                var map_html = d3.select("#worldMap");
+                map_html.transition(t).call(zoom.transform, d3.zoomIdentity);
+            }
+            resetmap_bottom .addEventListener("click", resetMap);
+            map_html.call(zoom);
         }
 
         d3.select("#worldMap").on("click", function(d){

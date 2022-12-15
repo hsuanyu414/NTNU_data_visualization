@@ -22,6 +22,15 @@
     font-size: 12px;
     font-family: sans-serif;
 }
+.worldMap {
+  border: 1px solid #000;
+  border-radius: 5px;
+  margin: 0 auto;
+  background-color: #fff;
+  position: relative;
+  
+
+}
 
 .map path {
     stroke: #000;
@@ -86,6 +95,7 @@
   height: 450px;
   width: 917px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #barchart text {
@@ -97,4 +107,20 @@
   text-align: center;
   font-size: 2em;
   font-weight: bold;
+}
+
+.map-chart-title {
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.line-chart-title {
+  text-align: center;
+  font-size: 2em;
+  font-weight: bold;
+}
+
+span {
+  font-style: italic;
 }

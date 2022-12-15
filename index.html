@@ -16,7 +16,11 @@ text {
 	<div class="base-container">
 		<div class="container">
 			<div class="worldMapDiv" style="display:inline-block">
-				<svg id="worldMap" width="1200" height="500"></svg>
+				<div class="map-chart-title">
+					Death count of COD <span id="cause-of-death-map"></span>
+					in <span id="yearINmap"></span>
+				</div>
+				<svg id="worldMap" class="worldMap" width="1200" height="500"></svg>
 			</div>
 			<div class="interaction_container" style="display:inline-block">
 				<div class="slidecontainer">
@@ -26,6 +30,7 @@ text {
 				<div class="selectorcontainer" style="display:inline-block">
 					<select name="cause-of-death" class="selector" id="cause-of-death-selector"></select>
 					<p>Cause of Death: <span id="cause-of-death"></span></p>
+					<button class="reset-map-btn">Reset Map</button>
 					<input type="checkbox" id="demoCheckbox" name="checkbox" value="1">
 					<label for="demoCheckbox">Show in Ratio</label>
 				</div>
@@ -34,11 +39,22 @@ text {
 		<div class="below">
 			<div class="chart-container">
 				<div class="barchart-container">
-					<!-- <div class="bar-chart-title">Title</div> -->
+					<div class="bar-chart-title">
+						Cause of Death Ranking
+						in Country: <span id="countryINbar"></span>
+						in <span id="yearINbar"></span>
+					</div>
 					<div id="barchart"></div>
 					<div id="x-axis"></div>
 				</div>
-				<div id="linechart"></div>
+				<div class="linechart-container">
+					<div class="line-chart-title">
+						Death count of COD: <span id="cause-of-death-line"></span>
+						in <span id="countryINline"></span>
+					</div>
+					<div id="linechart"></div>
+				</div>
+				
 			</div>
 		</div>
 	</div>
