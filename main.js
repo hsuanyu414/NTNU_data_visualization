@@ -110,7 +110,7 @@ function getCODDeathCountByYear(data, year, code="All") {
 cod_csv.then((data) => {
     /*SHARED GLOBAL VARIABLE*/
     
-    var t = d3.transition().duration(750).delay(100);
+    var t = d3.transition().duration(1000);
     
 
     checkbox.onchange = function() {
@@ -363,7 +363,7 @@ cod_csv.then((data) => {
 
     // set the dimensions and margins of the graph
     let death_count = {};
-    let linechart_margin = {top: 10, right: 80, bottom: 40, left: 180},
+    let linechart_margin = {top: 10, right: 100, bottom: 40, left: 180},
         linechart_width = 900 - linechart_margin.left - linechart_margin.right,
         linechart_height = 460 - linechart_margin.top - linechart_margin.bottom;
     var linechartYasis, linechartLines, linechartLinesArea, linechartCircles, x, y, linechartLines, linechartLinesAreaBase, linechartCirclesBase, linechartXaxis, linechartYaxis, linechartXaxisGroup, linechartYaxisGroup, linechartSvg, linechartSvgGroup, linechartSvgAreaGroup, linechartSvgLineGroup, linechartSvgCircleGroup;
@@ -451,7 +451,7 @@ cod_csv.then((data) => {
         linechartLinesArea = linechart_svg.append("path")
         .datum(data_)
         .attr("fill", cod_color[cod_options.indexOf(cod)])
-        .attr("opacity", 0.2)
+        .attr("opacity", 0.6)
         .attr("class", "line_chart_line")
         .attr("d", d3.area()
             .x((d) => x(d.year))
@@ -459,38 +459,89 @@ cod_csv.then((data) => {
             .y1((d) => y(d.value))
         )
 
-        linechartCircles = linechart_svg.selectAll("circle")
-        .data(data_)
-            .enter().append("circle")
-            .attr("fill", cod_color[cod_options.indexOf(cod)])
-            .attr("cx", function(d) { return x(d.year) })
-            .attr("cy", function(d) { return y(d.value) })
-            .attr("r", 0)
+        // linechartCircles = linechart_svg.selectAll("circle")
+        // .data(data_)
+        //     .enter().append("circle")
+        //     .attr("fill", cod_color[cod_options.indexOf(cod)])
+        //     .attr("cx", function(d) { return x(d.year) })
+        //     .attr("cy", function(d) { return y(d.value) })
+        //     .attr("r", 3)
         
-        // // Add the line
-        // linechartLinesBase = linechart_svg.append("path")
-        // .datum(data_)
-        // .attr("fill", "none")
-        // .attr("class", "line_chart_line")
-        // .attr("stroke", cod_color[cod_options.indexOf(cod)])
-        // .attr("stroke-width", 2)
-        // .attr("d", d3.line()
-        //     .x((d) => x(d.year))
-        //     .y((d) => y(d.death_count))
-        // )
-
+        // console.log(death_count)
+        // linetip = d3.tip()
+        // .attr('class', 'd3-tip-line')
+        // .offset([-10, 0])
+        // .html(function(d, i) {
+        //     let year_tool = d.year.getFullYear();
+        //     return "Year:" 
+        //         + year_tool
+        //         + "<br>count: " + death_count[year_tool] + "</span>"
+        //         + "<br>ratio: " + formatAsPercent(death_count_ratio[year_tool]) + "%</span>";
+        // })
+        // linechart_svg.call(linetip);
+        // linechartCircles.on('mouseover', linetip.show)
+        // .on('mouseout', linetip.hide);
         
+        var bisect_left = d3.bisector(function(d) { 
+            return d.year; }).left;
+        var bisect_right = d3.bisector(function(d) {
+            return d.year; }).right;
 
-        // linechartLinesAreaBase = linechart_svg.append("path")
-        // .datum(data_)
-        // .attr("fill", cod_color[cod_options.indexOf(cod)])
-        // .attr("opacity", 0.2)
-        // .attr("class", "line_chart_line")
-        // .attr("d", d3.area()
-        //     .x((d) => x(d.year))
-        //     .y0(linechart_height)
-        //     .y1((d) => y(d.death_count))
-        // )
+        // Create the circle that travels along the curve of chart
+        var focus = linechart_svg
+            .append('g')
+            .append('circle')
+            .style("fill", "none")
+            .attr("stroke", "black")
+            .attr('r', 8.5)
+            .style("opacity", 0)
+
+        // Create the text that travels along the curve of chart
+        var focusText = d3.select("#linechart")
+            .append('g')
+            .append('text')
+            .style("opacity", 0)
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle")
+            .attr("class", "line_chart_tooltip")
+        
+        linechart_svg
+            .on('mouseover', line_tip_mouseover)
+            .on('mousemove', line_tip_mousemove)
+            .on('mouseout', line_tip_mouseout);
+        
+        function line_tip_mouseover() {
+            focus.style("opacity", 1)
+            focusText.style("opacity",1)
+        }
+
+        function line_tip_mousemove() {
+            // recover coordinate we need
+            var x0 = x.invert(d3.mouse(this)[0]);
+            var i = bisect_left(data_, x0, 0);
+
+            selectedData = data_[i]
+            focus
+                .attr("cx", x(selectedData.year))
+                .attr("cy", y(selectedData.value))
+            focusText
+                .html( function(d){
+                    str = "Year: " + selectedData.year.getFullYear() 
+                    if (selected_ratio)
+                        str += "<br>Ratio: " + formatAsPercent(selectedData.value)
+                    else
+                        str += "<br>Count: " + selectedData.value
+                    return str
+                })
+                .style("position", "absolute")   
+                .style("left", x(selectedData.year)+1000 + "px")
+                .style("top", y(selectedData.value)+500 + "px");
+        }
+        function line_tip_mouseout() {
+            focus.style("opacity", 0)
+            focusText.style("opacity", 0)
+        }
+        
         
     }
     
@@ -555,11 +606,11 @@ cod_csv.then((data) => {
             .y1((d) => y(d.value))
         )
 
-        linechartCircles
-        .data(data_).transition(t)
-            .attr("fill", cod_color[cod_options.indexOf(cod)])
-            .attr("cx", function(d) { return x(d.year) })
-            .attr("cy", function(d) { return y(d.death_count) })
+        // linechartCircles
+        // .data(data_).transition(t)
+        //     .attr("fill", cod_color[cod_options.indexOf(cod)])
+        //     .attr("cx", function(d) { return x(d.year) })
+        //     .attr("cy", function(d) { return y(d.death_count) })
     }
     
 })
