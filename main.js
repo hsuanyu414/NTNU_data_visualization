@@ -43,7 +43,7 @@ var yearINmap = year;
 csv_array = []
 
 /* MAIN FUNCTION */
-cod_csv = d3.csv("cause_of_deaths.csv", (row) => {
+cod_csv = d3.csv("02_cause_of_deaths.csv", (row) => {
     if (!country_code.includes(row.Code)) {
         country_code.push(row.Code);
     }
@@ -69,7 +69,7 @@ for(let i=0; i<31; i++)
 map_worldJson = d3.json("worldMap.json")
 let map_margin = {top: 100, right: 20, bottom: 20, left: 20},
     map_width = 1200 - map_margin.left - map_margin.right,
-    map_height = 600 - map_margin.top - map_margin.bottom;
+    map_height = 500 - map_margin.top - map_margin.bottom;
 
 
 /* BAR CHART DATA PROCESSING FUNCTION */
@@ -117,8 +117,8 @@ cod_csv.then((data) => {
         selected_ratio = this.checked;
         console.log("checkbox_change: "+this.checked)
         if (this.checked) {
-            percentINbar.innerHTML = "ratio(in %)";
-            percentINline.innerHTML = "ratio(in %)";
+            percentINbar.innerHTML = "percentage";
+            percentINline.innerHTML = "percentage";
         } else {
             percentINbar.innerHTML = "count";
             percentINline.innerHTML = "count";
@@ -253,8 +253,8 @@ cod_csv.then((data) => {
                 for (let i = 0; i < cod_data.length; ++i) {
                     if (cod_data[i].Code == d.properties.adm0_iso && cod_data[i].Year == selected_year) {
                         found = true;
-                        ret_str += "<br>Death Count: " + cod_data[i][selected_cod];
-                        ret_str += "<br>Death Ratio: "+ formatAsPercent(100*cod_data[i][selected_cod]/cod_data[i]["All"]);
+                        ret_str += "<br>Count: " + cod_data[i][selected_cod];
+                        ret_str += "<br>Percentage: "+ formatAsPercent(100*cod_data[i][selected_cod]/cod_data[i]["All"]);
                         break;
                     }
                     found = false;
@@ -363,9 +363,9 @@ cod_csv.then((data) => {
 
     // set the dimensions and margins of the graph
     let death_count = {};
-    let linechart_margin = {top: 10, right: 100, bottom: 40, left: 180},
-        linechart_width = 900 - linechart_margin.left - linechart_margin.right,
-        linechart_height = 460 - linechart_margin.top - linechart_margin.bottom;
+    let linechart_margin = {top: 10, right: 80, bottom: 30, left: 100},
+        linechart_width = 880 - linechart_margin.left - linechart_margin.right,
+        linechart_height = 360 - linechart_margin.top - linechart_margin.bottom;
     var linechartYasis, linechartLines, linechartLinesArea, linechartCircles, x, y, linechartLines, linechartLinesAreaBase, linechartCirclesBase, linechartXaxis, linechartYaxis, linechartXaxisGroup, linechartYaxisGroup, linechartSvg, linechartSvgGroup, linechartSvgAreaGroup, linechartSvgLineGroup, linechartSvgCircleGroup;
     var yearParse = d3.timeParse("%Y");
     //global variable for linechart
@@ -396,14 +396,16 @@ cod_csv.then((data) => {
             .attr("height", linechart_height + linechart_margin.top + linechart_margin.bottom)
             .append("g")
             .attr("transform","translate(" + linechart_margin.left + "," + linechart_margin.top + ")");
-
         // Add X axis --> it is a date format
         x = d3.scaleTime()
             .domain(d3.extent(Object.keys(death_count), (d) => yearParse(d)))
             .range([ 0, linechart_width ]);
         linechartXasis = linechart_svg.append("g")
             .attr("transform", "translate(0," + linechart_height + ")")
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x).ticks(30));
+        
+        linechartXasis.selectAll("text")
+            .attr("transform", "translate(-10,10)rotate(-45)")
 
         if(selected_ratio)
             selected_dict = death_count_ratio;
@@ -414,7 +416,7 @@ cod_csv.then((data) => {
         ratio_max = d3.max(Object.values(selected_dict))
         ratio_min = d3.min(Object.values(selected_dict))
         ratio_median = d3.mean(Object.values(selected_dict))
-        ratio_offset = ratio_median*0.3
+        ratio_offset = ratio_median*0.2
         y = d3.scaleLinear()
         .domain(
             [Math.max(0, ratio_min-ratio_offset), 
@@ -458,29 +460,6 @@ cod_csv.then((data) => {
             .y0(linechart_height)
             .y1((d) => y(d.value))
         )
-
-        // linechartCircles = linechart_svg.selectAll("circle")
-        // .data(data_)
-        //     .enter().append("circle")
-        //     .attr("fill", cod_color[cod_options.indexOf(cod)])
-        //     .attr("cx", function(d) { return x(d.year) })
-        //     .attr("cy", function(d) { return y(d.value) })
-        //     .attr("r", 3)
-        
-        // console.log(death_count)
-        // linetip = d3.tip()
-        // .attr('class', 'd3-tip-line')
-        // .offset([-10, 0])
-        // .html(function(d, i) {
-        //     let year_tool = d.year.getFullYear();
-        //     return "Year:" 
-        //         + year_tool
-        //         + "<br>count: " + death_count[year_tool] + "</span>"
-        //         + "<br>ratio: " + formatAsPercent(death_count_ratio[year_tool]) + "%</span>";
-        // })
-        // linechart_svg.call(linetip);
-        // linechartCircles.on('mouseover', linetip.show)
-        // .on('mouseout', linetip.hide);
         
         var bisect_left = d3.bisector(function(d) { 
             return d.year; }).left;
@@ -493,7 +472,7 @@ cod_csv.then((data) => {
             .append('circle')
             .style("fill", "none")
             .attr("stroke", "black")
-            .attr('r', 8.5)
+            .attr('r', 8)
             .style("opacity", 0)
 
         // Create the text that travels along the curve of chart
@@ -508,7 +487,22 @@ cod_csv.then((data) => {
         linechart_svg
             .on('mouseover', line_tip_mouseover)
             .on('mousemove', line_tip_mousemove)
-            .on('mouseout', line_tip_mouseout);
+            .on('mouseout', line_tip_mouseout)
+            .on("click", changeYearInLineChart);
+
+
+        function changeYearInLineChart() {
+            let x0 = x.invert(d3.mouse(this)[0]);
+            let i = bisect_left(data_, x0, 0);
+            let year_inter = data_[i].year.getFullYear()
+            slider.value = year_inter
+            year_output.innerHTML = year_inter;
+            year_map_output.innerHTML = year_inter;
+            year_bar_output.innerHTML = year_inter;
+            selected_year = year_inter;
+            changeMap();
+            updateBarChart(getCODDeathCountByYear(data, slider.value, selected_country_code));
+        }
         
         function line_tip_mouseover() {
             focus.style("opacity", 1)
@@ -517,8 +511,8 @@ cod_csv.then((data) => {
 
         function line_tip_mousemove() {
             // recover coordinate we need
-            var x0 = x.invert(d3.mouse(this)[0]);
-            var i = bisect_left(data_, x0, 0);
+            let x0 = x.invert(d3.mouse(this)[0]);
+            let i = bisect_left(data_, x0, 0);
 
             selectedData = data_[i]
             focus
@@ -528,14 +522,14 @@ cod_csv.then((data) => {
                 .html( function(d){
                     str = "Year: " + selectedData.year.getFullYear() 
                     if (selected_ratio)
-                        str += "<br>Ratio: " + formatAsPercent(selectedData.value)
+                        str += "<br>Percentage: " + formatAsPercent(selectedData.value)
                     else
                         str += "<br>Count: " + selectedData.value
                     return str
                 })
                 .style("position", "absolute")   
                 .style("left", x(selectedData.year)+1000 + "px")
-                .style("top", y(selectedData.value)+500 + "px");
+                .style("top", y(selectedData.value)+450 + "px");
         }
         function line_tip_mouseout() {
             focus.style("opacity", 0)
@@ -575,7 +569,7 @@ cod_csv.then((data) => {
         ratio_max = d3.max(Object.values(selected_dict))
         ratio_min = d3.min(Object.values(selected_dict))
         ratio_median = d3.mean(Object.values(selected_dict))
-        ratio_offset = ratio_median*0.3
+        ratio_offset = ratio_median*0.2
             y.domain(
                 [Math.max(0, ratio_min-ratio_offset), 
                  Math.min(ratio_max+ratio_offset, 100+(selected_ratio==false? Infinity:0))])
@@ -612,7 +606,27 @@ cod_csv.then((data) => {
         //     .attr("cx", function(d) { return x(d.year) })
         //     .attr("cy", function(d) { return y(d.death_count) })
     }
-    
+
+    BAR_CHART.hover_rects
+    .on("click", d => {
+        console.log({cod: d.cause_of_death})
+        selected_cod = d.cause_of_death
+        color_now = cod_color[cod_options.indexOf(d.cause_of_death)];
+        changeLineChart(selected_cod, selected_country_code);
+        changeMap(color_now);
+        const causeOfDeathSelector = document.getElementById("cause-of-death-selector");
+        causeOfDeathSelector.value = d.cause_of_death;
+        causeOfDeath_output.innerHTML = d.cause_of_death;
+        causeOfDeath_map_output.innerHTML = d.cause_of_death;
+        causeOfDeath_line_output.innerHTML = d.cause_of_death;
+    })
+    .on("mouseenter", function(d) {
+        d3.select(this).attr("stroke", "black")
+    })
+    .on("mouseleave", function() {
+        d3.select(this).attr("stroke", "none")
+    })
+
 })
 
 
@@ -657,6 +671,14 @@ function drawBarChart(data) {
     .domain(data.map(d => { return `${d.cause_of_death} (${d.death_count})`}))
     .padding(.1);  
 
+    // svg.append("g")
+    // .attr("class", "grid")
+    // .call(d3.axisBottom(x)
+    //     .tickSize(height, 0, 0)
+    //     .tickFormat('')
+    //     )
+    //     .attr("opacity", 0.6)
+
     svg.selectAll("rect")
     .data(data)
     .join("rect")
@@ -664,12 +686,22 @@ function drawBarChart(data) {
     .attr("y", d => y(`${d.cause_of_death} (${d.death_count})`))
     .attr("width", d => x(d.death_count))
     .attr("height", y.bandwidth())
-    .attr("fill", d => cod_color[cod_options.indexOf(d.cause_of_death)])
+    .attr("fill", d => cod_color[cod_options.indexOf(d.cause_of_death)]);
 
     const yAxis = svg.append("g")
     .call(d3.axisRight(y))
     yAxis.selectAll(".tick text")
     .attr("transform", `translate(10, 0)`)
+
+    const hover_rects = svg.selectAll(".hover-rect")
+    .data(data)
+    .join("rect")
+    .attr("class", "hover-rect")
+    .attr("x", x(0) + 1)
+    .attr("y", d => y(`${d.cause_of_death} (${d.death_count})`))
+    .attr("width", d => x(max_death_count))
+    .attr("height", y.bandwidth())
+    .attr("fill", "rgb(0, 0, 0, 0)");
 
     BAR_CHART = {
         svg: svg,
@@ -679,6 +711,7 @@ function drawBarChart(data) {
         yAxis: yAxis,
         width: width,
         height: height,
+        hover_rects: hover_rects,
     }
 }
 
@@ -731,6 +764,18 @@ function updateBarChart(data) {
         .attr("width", d => {return (max_death_count == 0 ? 0 : x(d.death_count))})
         .attr("height", y.bandwidth())
         .attr("fill", d => cod_color[cod_options.indexOf(d.cause_of_death)])
+
+    const hover_u = svg.selectAll(".hover-rect").data(data);
+    hover_u.enter()
+    .append("hover-rect")
+    .merge(hover_u)
+    .transition()
+    .duration(1000)
+        .attr("x", x(0) + 1)
+        .attr("y", d => y(`${d.cause_of_death} (${checkbox.checked ? formatAsPercent(d.death_count) : d.death_count})`))
+        .attr("width", x(max_death_count))
+        .attr("height", y.bandwidth())
+        .attr("fill", "rgb(0, 0, 0, 0)");
 }
 
 function formatAsPercent(num) {
