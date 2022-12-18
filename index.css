@@ -51,8 +51,9 @@ body {
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.918);
   margin-left: 10px;
-  margin-right: 10px;
-
+  /* margin-right: 10px; */
+  /* margin-top: 10px; */
+  margin: 0 10px;
 }
 
 .map path {
@@ -94,11 +95,20 @@ body {
   font-size: 0.9em;
 }
 
+.margin-adjust {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0 10px
+}
+
 .base-container {
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: left;
   justify-content: space-between;
 }
@@ -107,12 +117,31 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  height: 470px;
+  width: 1900px;
 }
 
 .interaction_container {
-  margin-left: 10px;
-  margin-bottom: 80px;
+  display: flex;
+  margin: 10px 0 0 10px;
+  padding: 10px 10px;
   font-size: 1.6em;
+  box-shadow: 0 0 10px silver;
+  background-color: white;
+  border-radius: 10px;
+  height: 433.5px;
+  flex-grow: 1;
+
+  max-width: 597px;
+}
+
+.interaction-flex-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+
+  /* margin: 0 20px; */
 }
 
 .reset-map-btn {
@@ -123,12 +152,37 @@ body {
   display: inline-block;
 }
 
-.barchart-container, .linechart-container{
-  height: 400px;
+.worldMapDiv, .barchart-container, .linechart-container {
+  margin-top: 10px;
+  padding: 10px 5px;
+  box-shadow: 0px 0px 10px silver;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.worldMapDiv {
+  max-width: 1220px;
+}
+
+.barchart-container {
+  flex: 1;
+}
+
+.linechart-container {
+  margin-left: 10px;
+  padding: 10px 20px;
+  max-width: 890px;
+}
+
+.below {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
 }
 
 #barchart {
-  height: 400px;
+  /* padding-top: 5px; */
+  height: 330px;
   width: 917px;
   overflow-y: auto;
   overflow-x: hidden;
