@@ -18,7 +18,7 @@ text {
 			<div class="container">
 				<div class="worldMapDiv" style="display:inline-block;">
 					<div class="map-chart-title">
-						Death count/ratio due to <span id="cause-of-death-map"></span>
+						Death count/percentage due to <span id="cause-of-death-map"></span>
 						in <span id="yearINmap"></span>
 					</div>
 					<svg id="worldMap" class="worldMap" width="1200" height="400"></svg>
@@ -34,28 +34,31 @@ text {
 							<p>Cause of Death: <span id="cause-of-death"></span></p>
 							<button class="reset-map-btn">Reset Zooming</button>
 							<input type="checkbox" id="demoCheckbox" name="checkbox" value="1">
-							<label for="demoCheckbox">Show in Ratio</label>
+							<label for="demoCheckbox">Show in percentage (of total)</label>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="below">
-				<div class="barchart-container">
-					<div class="bar-chart-title">
-						Cause of Death Ranking
-						in <span id="countryINbar"></span>
-						in <span id="yearINbar"></span>
-						<span id="percentINbar"></span>
+				<div class="chart-container" style="display:inline-block">
+					<div class="barchart-container">
+						<div class="bar-chart-title">
+							Cause of Death <span id="percentINbar"></span> Ranking
+							in <span id="countryINbar"></span>
+							in <span id="yearINbar"></span>
+							
+						</div>
+						<div id="barchart"></div>
+						<div id="x-axis"></div>
 					</div>
-					<div id="barchart"></div>
-					<div id="x-axis"></div>
-				</div>
-				<div class="linechart-container">
-					<div class="line-chart-title">
-						Death <span id="percentINline"></span> due to <span id="cause-of-death-line"></span>
-						in <span id="countryINline"></span>
+					<div class="linechart-container">
+						<div class="line-chart-title">
+							Death <span id="percentINline"></span> due to <span id="cause-of-death-line"></span>
+							in <span id="countryINline"></span>
+						</div>
+						<div id="linechart"></div>
 					</div>
-					<div id="linechart"></div>
+					
 				</div>
 			</div>
 		</div>
