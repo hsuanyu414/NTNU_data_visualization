@@ -203,13 +203,15 @@ body {
   text-align: center;
   font-size: 1.5em;
   font-weight: bold;
-
 }
 
 .line-chart-title {
   text-align: center;
   font-size: 1.5em;
   font-weight: bold;
+  position: relative;
+  top: 3px;
+  min-height: 58px;
 }
 
 span {
